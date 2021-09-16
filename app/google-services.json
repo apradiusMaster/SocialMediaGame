@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1087664361045",
+    "project_id": "socialmediagamer-b3006",
+    "storage_bucket": "socialmediagamer-b3006.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087664361045:android:bb3c097a03869718ed4edc",
+        "android_client_info": {
+          "package_name": "com.gustavo.socialmediagame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1087664361045-hu41gk4dl5ujin36qd045dnql9d60asn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gustavo.socialmediagame",
+            "certificate_hash": "1ae6e8f63a852204cf7ed51a44554382b1de1b05"
+          }
+        },
+        {
+          "client_id": "1087664361045-qgosdut31pbigf3bgia5fdb5ohj9cuq6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2mEvieag67a8Yp6ElyBWYM7lkm4Sq1MU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1087664361045-qgosdut31pbigf3bgia5fdb5ohj9cuq6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
