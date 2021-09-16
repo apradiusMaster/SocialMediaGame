@@ -15,6 +15,9 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gustavo.socialmediagame.R;
+import com.gustavo.socialmediagame.models.User;
+import com.gustavo.socialmediagame.providers.AuthProvider;
+import com.gustavo.socialmediagame.providers.UsersProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +33,8 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputEditText mTextInputPassword;
     TextInputEditText mTextInputConfirmPassword;
     Button mButtonRegister;
-    FirebaseAuth mAuth;
-    FirebaseFirestore mFirestore;
+    AuthProvider mAuthProvider;
+    UsersProvider mUsersProvider;
 
     CircleImageView mCircleImageViewBack;
     @Override
@@ -46,8 +49,8 @@ public class RegisterActivity extends AppCompatActivity {
         mTextInputConfirmPassword = findViewById(R.id.textInputCofirmPassword);
         mButtonRegister = findViewById(R.id.btnRegister);
 
-        mAuth = FirebaseAuth.getInstance();
-        mFirestore = FirebaseFirestore.getInstance();
+        mAuthProvider = new AuthProvider();
+        mUsersProvider = new UsersProvider();
 
         mButtonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,16 +101,17 @@ public class RegisterActivity extends AppCompatActivity {
         return matcher.matches();
     }
     private void createUser( String username ,final String email, final String password){
-        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        mAuthProvider.register(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull  Task<AuthResult> task) {
 
                 if (task.isSuccessful()){
-                    String id = mAuth.getCurrentUser().getUid();
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("email", email);
-                    map.put("username", username);
-                    mFirestore.collection( "Users").document(id).set(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    String id = mAuthProvider.getUid();
+                    User user = new User();
+                    user.setId(id);
+                    user.setEmail(email);
+                    user.setUsername(username);
+                    mUsersProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull  Task<Void> task) {
                             if (task.isSuccessful()){

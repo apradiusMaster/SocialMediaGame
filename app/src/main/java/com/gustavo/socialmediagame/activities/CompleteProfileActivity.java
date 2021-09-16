@@ -15,6 +15,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gustavo.socialmediagame.R;
+import com.gustavo.socialmediagame.models.User;
+import com.gustavo.socialmediagame.providers.AuthProvider;
+import com.gustavo.socialmediagame.providers.UsersProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,8 +26,8 @@ public class CompleteProfileActivity extends AppCompatActivity {
 
     TextView mTextViewUserName;
     Button mButtonRegister;
-     FirebaseAuth mAuth;
-     FirebaseFirestore mFirebaseFirestore;
+     AuthProvider mAuthProvider;
+     UsersProvider mUsersProvider;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +35,8 @@ public class CompleteProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_complete_profile);
         mTextViewUserName = findViewById(R.id.textInputUserName);
          mButtonRegister = findViewById(R.id.btnRegister);
-         mAuth = FirebaseAuth.getInstance();
-         mFirebaseFirestore = FirebaseFirestore.getInstance();
+         mAuthProvider = new AuthProvider();
+         mUsersProvider = new UsersProvider();
          mButtonRegister.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
@@ -53,10 +56,12 @@ public class CompleteProfileActivity extends AppCompatActivity {
     }
 
     private void updateUser(String username) {
-        String id= mAuth.getCurrentUser().getUid();
-        Map<String, Object> map = new HashMap<>();
-        map.put("username", username);
-        mFirebaseFirestore.collection("Users").document(id).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String id= mAuthProvider.getUid();
+        User user = new User();
+        user.setId(id);
+        user.setUsername(id);
+
+        mUsersProvider.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull  Task<Void> task) {
                 if (task.isSuccessful()){
