@@ -3,6 +3,7 @@ package com.gustavo.socialmediagame.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -22,12 +23,15 @@ import com.gustavo.socialmediagame.providers.UsersProvider;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
 public class CompleteProfileActivity extends AppCompatActivity {
 
     TextView mTextViewUserName;
     Button mButtonRegister;
      AuthProvider mAuthProvider;
      UsersProvider mUsersProvider;
+     AlertDialog mDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,11 @@ public class CompleteProfileActivity extends AppCompatActivity {
          mButtonRegister = findViewById(R.id.btnRegister);
          mAuthProvider = new AuthProvider();
          mUsersProvider = new UsersProvider();
+        mDialog = new SpotsDialog.Builder()
+                .setContext(this)
+                .setMessage("Espere un momento..")
+                .setCancelable(false).build();
+
          mButtonRegister.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View view) {
@@ -60,10 +69,11 @@ public class CompleteProfileActivity extends AppCompatActivity {
         User user = new User();
         user.setId(id);
         user.setUsername(id);
-
+        mDialog.show();
         mUsersProvider.update(user).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull  Task<Void> task) {
+                mDialog.dismiss();
                 if (task.isSuccessful()){
                     Intent intent = new Intent(CompleteProfileActivity.this, HomeActivity.class);
                     startActivity(intent);
