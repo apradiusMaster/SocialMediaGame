@@ -21,6 +21,7 @@ import com.gustavo.socialmediagame.models.User;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -35,6 +36,7 @@ import dmax.dialog.SpotsDialog;
     TextInputEditText mTextInputEmail;
     TextInputEditText mTextInputPassword;
     TextInputEditText mTextInputConfirmPassword;
+    TextInputEditText mTextInputPhone;
     Button mButtonRegister;
     AuthProvider mAuthProvider;
     UsersProvider mUsersProvider;
@@ -51,6 +53,7 @@ import dmax.dialog.SpotsDialog;
         mTextInputEmail = findViewById(R.id.textInputEmail);
         mTextInputPassword = findViewById(R.id.textInputPassword);
         mTextInputConfirmPassword = findViewById(R.id.textInputCofirmPassword);
+        mTextInputPhone = findViewById(R.id.textInputPhone);
         mButtonRegister = findViewById(R.id.btnRegister);
 
         mAuthProvider = new AuthProvider();
@@ -79,12 +82,13 @@ import dmax.dialog.SpotsDialog;
         String email = mTextInputEmail.getText().toString();
         String password = mTextInputPassword.getText().toString();
         String confirmPassword = mTextInputConfirmPassword.getText().toString();
-        if(!userName.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
+        String phone = mTextInputPhone.getText().toString();
+        if(!userName.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty() && !phone.isEmpty()){
             if (isEmailValid(email)){
 
                 if (password.equals(confirmPassword)){
                     if (password.length() >=6){
-                        createUser(userName,email,password);
+                        createUser(userName,email,password, phone);
                     } else {
                         Toast.makeText(this, "la contrase.ña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
                     }
@@ -109,7 +113,7 @@ import dmax.dialog.SpotsDialog;
         Matcher matcher = pattern.matcher(email);
         return matcher.matches();
     }
-    private void createUser( String username ,final String email, final String password){
+    private void createUser( String username ,final String email, final String password, final String phone){
         mDialog.show();
         mAuthProvider.register(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -121,6 +125,8 @@ import dmax.dialog.SpotsDialog;
                     user.setId(id);
                     user.setEmail(email);
                     user.setUsername(username);
+                    user.setPhone(phone);
+                    user.setTimestamp(new Date().getTime());
                     mUsersProvider.create(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull  Task<Void> task) {
