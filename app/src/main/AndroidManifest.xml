@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gustavo.socialmediagame">
-    <uses-feature android:name="android.hardware.camera2"
-                  android:required="false"/>
+
+    <uses-feature
+        android:name="android.hardware.camera2"
+        android:required="false" />
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -14,19 +16,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SocialMediaGame">
+        <activity android:name=".activities.EditProfileActivity"></activity>
 
         <provider
-            android:authorities="com.gustavo.socialmediagame"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="com.gustavo.socialmediagame"
             android:exported="false"
             android:grantUriPermissions="true">
-
-            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
-                       android:resource="@xml/file_paths"/>
-
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".activities.PostActivity"></activity>
+        <activity android:name=".activities.PostActivity" />
         <activity android:name=".activities.CompleteProfileActivity" />
         <activity android:name=".activities.HomeActivity" />
         <activity android:name=".activities.RegisterActivity" />
