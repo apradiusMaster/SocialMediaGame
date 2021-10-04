@@ -30,6 +30,8 @@ public class UsersProvider {
         Map<String, Object> map = new HashMap<>();
         map.put("username",user.getUsername());
         map.put("phone", user.getPhone());
+        map.put("image_profile", user.getImageProfile());
+        map.put("image_cover", user.getImageCover());
         map.put("timestamp", user.getTimestamp());
         return mCollection.document(user.getId()).update(map);
     }
