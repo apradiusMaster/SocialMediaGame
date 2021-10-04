@@ -8,10 +8,21 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
 import com.gustavo.socialmediagame.activities.EditProfileActivity;
+import com.gustavo.socialmediagame.providers.AuthProvider;
+import com.gustavo.socialmediagame.providers.PostProvider;
+import com.gustavo.socialmediagame.providers.UsersProvider;
+import com.squareup.picasso.Picasso;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +33,18 @@ public class ProfileFragment extends Fragment {
 
     View mView;
     LinearLayout mLinearLayoutEditProfile;
+    UsersProvider mUserProvider;
+    AuthProvider mAuthProvider;
+    PostProvider mPostProvider;
+
+    TextView mTextViewUserName;
+    TextView mTextViewEmail;
+    TextView mTextViewPhone;
+    TextView mTextViewPostNumber;
+
+    ImageView mImageViewCover;
+    CircleImageView mCircleImageProfile;
+
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -60,6 +83,7 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+
         }
     }
 
@@ -68,6 +92,16 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_profile, container, false);
+        mUserProvider = new UsersProvider();
+        mAuthProvider = new AuthProvider();
+        mPostProvider = new PostProvider();
+        mTextViewUserName = mView.findViewById(R.id.textViewuserName);
+        mTextViewEmail = mView.findViewById(R.id.textViewEmail);
+        mTextViewPhone = mView.findViewById(R.id.textViewPhone);
+        mTextViewPostNumber = mView.findViewById(R.id.textViewPostNumber);
+        mCircleImageProfile = mView.findViewById(R.id.circleImageProfile);
+        mImageViewCover = mView.findViewById(R.id.imageViewCover);
+
 
         mLinearLayoutEditProfile = mView.findViewById(R.id.linearLayoutEditProfile);
 
@@ -77,7 +111,57 @@ public class ProfileFragment extends Fragment {
                 goToEditProfile();
             }
         });
+        getUser();
+        getPostUser();
         return  mView;
+
+    }
+
+    private void getUser() {
+        mUserProvider.getUser(mAuthProvider.getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+                if (documentSnapshot.contains("username")){
+                    String username = documentSnapshot.getString("username");
+                    mTextViewUserName.setText(username);
+                }
+                if (documentSnapshot.contains("email")){
+                    String  email = documentSnapshot.getString("email");
+                    mTextViewEmail.setText(email);
+                }
+                if(documentSnapshot.contains("phone")){
+                    String phone = documentSnapshot.getString("phone");
+                    mTextViewPhone.setText(String.valueOf(phone));
+                }
+                if (documentSnapshot.contains("image_profile")){
+                    String imageProfile = documentSnapshot.getString("image_profile");
+                    if (imageProfile != null){
+                        if (!imageProfile.isEmpty()){
+                            Picasso.with(getContext()).load(imageProfile).into(mCircleImageProfile);
+                        }
+                    }
+                }
+                if (documentSnapshot.contains("image_cover")){
+                    String imageCover = documentSnapshot.getString("image_cover");
+                    if (imageCover != null){
+                        if (!imageCover.isEmpty()){
+                            Picasso.with(getContext()).load(imageCover).into(mImageViewCover);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void getPostUser(){
+        mPostProvider.getPostByUser(mAuthProvider.getUid()).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                int numberPost = queryDocumentSnapshots.size();
+                mTextViewPostNumber.setText(String.valueOf(numberPost));
+            }
+        });
     }
 
     private void goToEditProfile() {
