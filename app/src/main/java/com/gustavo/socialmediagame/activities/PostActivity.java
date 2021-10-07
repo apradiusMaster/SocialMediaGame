@@ -126,7 +126,7 @@ public class PostActivity extends AppCompatActivity {
         mImageViewPc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCategory = "pc";
+                mCategory = "PC";
                 mTextViewCategory.setText(mCategory);
             }
         });

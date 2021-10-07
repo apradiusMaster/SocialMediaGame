@@ -156,7 +156,6 @@ public class HomeFragment extends Fragment {
         if (item.getItemId() == R.id.itemLogout){
             logout();
 
-
         }
         return true;
     }
