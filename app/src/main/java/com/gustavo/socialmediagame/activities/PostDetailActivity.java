@@ -308,7 +308,7 @@ public class PostDetailActivity extends AppCompatActivity {
                         }
                     }
                     else{
-                        Toast.makeText(PostDetailActivity.this,"Se encontro un error", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(PostDetailActivity.this,"Se encontro un error", Toast.LENGTH_LONG).show();
                     }
             }
         });

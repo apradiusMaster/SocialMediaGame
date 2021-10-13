@@ -325,8 +325,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
     private void selectOptionImage(int numberImage) {
-        AlertDialog alert = mBuilderSelector.create();
-        alert.show();
+
         mBuilderSelector.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -348,6 +347,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
             }
         });
+        mBuilderSelector.show();
 
     }
 
