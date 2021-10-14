@@ -144,12 +144,18 @@ public class PostDetailActivity extends AppCompatActivity {
         mLikesProvider.getLikeByPost(mExtraPostId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
-                int numberLikes = value.size();
-                if (numberLikes == 1){
-                    mTextViewLikes.setText("me gustas");
-                } else {
-                    mTextViewLikes.setText(numberLikes + " me gustas");
-                }
+               if (error != null){
+                   if (!value.isEmpty()){
+                       int numberLikes = value.size();
+                       if (numberLikes == 1){
+                           mTextViewLikes.setText("me gustas");
+                       } else {
+                           mTextViewLikes.setText(numberLikes + " me gustas");
+                       }
+
+                   }
+               }
+
             }
         });
     }
