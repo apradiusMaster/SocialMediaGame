@@ -1,6 +1,7 @@
 package com.gustavo.socialmediagame.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,7 +26,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
 import com.gustavo.socialmediagame.adapters.CommentAdapter;
 import com.gustavo.socialmediagame.adapters.PostsAdapter;
@@ -35,8 +39,10 @@ import com.gustavo.socialmediagame.models.Post;
 import com.gustavo.socialmediagame.models.SliderItem;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.CommentsProvider;
+import com.gustavo.socialmediagame.providers.LikesProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
+import com.gustavo.socialmediagame.utils.RelativeTime;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -76,6 +82,9 @@ public class PostDetailActivity extends AppCompatActivity {
     Button mButtonShowProfile;
     FloatingActionButton mFabComment;
     RecyclerView mRecyclerViewComment;
+    TextView mTextViewRelativeTime;
+    TextView mTextViewLikes;
+    LikesProvider mLikesProvider;
 
     String mIdUser;
 
@@ -97,11 +106,14 @@ public class PostDetailActivity extends AppCompatActivity {
         mRecyclerViewComment = findViewById(R.id.recyclerViewComment);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(PostDetailActivity.this);
         mRecyclerViewComment.setLayoutManager(linearLayoutManager);
+        mTextViewRelativeTime = findViewById(R.id.textViewRelativeTime);
+        mTextViewLikes = findViewById(R.id.textViewRelativeLike);
 
         mPostProvider = new PostProvider();
         mUserProvider = new UsersProvider();
         mCommentsProvider = new CommentsProvider();
         mAuthProvider = new AuthProvider();
+        mLikesProvider = new LikesProvider();
 
 
         mExtraPostId = getIntent().getStringExtra("id");
@@ -124,7 +136,22 @@ public class PostDetailActivity extends AppCompatActivity {
         });
 
         getPost();
+        getNumberLikes();
 
+    }
+
+    private void getNumberLikes() {
+        mLikesProvider.getLikeByPost(mExtraPostId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
+                int numberLikes = value.size();
+                if (numberLikes == 1){
+                    mTextViewLikes.setText("me gustas");
+                } else {
+                    mTextViewLikes.setText(numberLikes + " me gustas");
+                }
+            }
+        });
     }
 
     @Override
@@ -271,6 +298,13 @@ public class PostDetailActivity extends AppCompatActivity {
                 if (documentSnapshot.contains("idUser")){
                      mIdUser= documentSnapshot.getString("idUser");
                     getUserInfo(mIdUser);
+
+                }
+
+                if (documentSnapshot.contains("timestamp")){
+                    long timestamp = documentSnapshot.getLong("timestamp");
+                    String relativeTime = RelativeTime.getTimeAgo(timestamp, PostDetailActivity.this);
+                    mTextViewRelativeTime.setText(relativeTime);
 
                 }
 

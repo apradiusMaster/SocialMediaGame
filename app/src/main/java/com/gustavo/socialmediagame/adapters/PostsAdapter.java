@@ -102,12 +102,10 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
                                     view.textViewLike.setText( 0 +" me gustas");
                                 }
                         }
-
             }
         });
 
     }
-
 
     private void like(Like like, ViewHolder view){
 
