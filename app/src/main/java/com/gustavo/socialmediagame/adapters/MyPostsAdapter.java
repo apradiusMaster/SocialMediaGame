@@ -1,6 +1,8 @@
 package com.gustavo.socialmediagame.adapters;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,6 +59,12 @@ public class MyPostsAdapter extends FirestoreRecyclerAdapter<Post, MyPostsAdapte
         holder.textViewRelativeTime.setText(relativeTime);
         holder.textViewTitle.setText(post.getTitle().toUpperCase());
 
+        if (post.getIdUser().equals(mAuthProvider.getUid())){
+            holder.imageViewDelete.setVisibility(View.VISIBLE);
+        } else {
+            holder.imageViewDelete.setVisibility(View.GONE);
+        }
+
         if (post.getImage1() != null) {
             if (!post.getImage1().isEmpty()) {
                 Picasso.with(context).load(post.getImage1()).into(holder.circleImagePost);
@@ -74,7 +82,23 @@ public class MyPostsAdapter extends FirestoreRecyclerAdapter<Post, MyPostsAdapte
         holder.imageViewDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                deletePost(postId);
+
+
+
+                new AlertDialog.Builder(context)
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setTitle("Eliminar publicacion")
+                        .setMessage("¿Estas seguro de realizar esta accion?")
+                        .setPositiveButton("SI", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                deletePost(postId);
+                            }
+                        })
+                        .setNegativeButton("NO", null)
+                        .show();
+
+
             }
         });
 

@@ -52,7 +52,7 @@
             android:id="@+id/imageViewCancelMyPost"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:src="@drawable/ic_cancel"/>
+            android:src="@drawable/ic_clear"/>
 
     </LinearLayout>
 

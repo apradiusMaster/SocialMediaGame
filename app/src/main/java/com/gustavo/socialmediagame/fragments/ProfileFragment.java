@@ -3,6 +3,7 @@ package com.gustavo.socialmediagame.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,8 @@ import android.widget.TextView;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
@@ -48,6 +51,7 @@ public class ProfileFragment extends Fragment {
     TextView mTextViewEmail;
     TextView mTextViewPhone;
     TextView mTextViewPostNumber;
+    TextView mTextViewExistPost;
 
     ImageView mImageViewCover;
     CircleImageView mCircleImageProfile;
@@ -109,6 +113,7 @@ public class ProfileFragment extends Fragment {
         mTextViewEmail = mView.findViewById(R.id.textViewEmail);
         mTextViewPhone = mView.findViewById(R.id.textViewPhone);
         mTextViewPostNumber = mView.findViewById(R.id.textViewPostNumber);
+        mTextViewExistPost = mView.findViewById(R.id.textViewExistPost);
         mCircleImageProfile = mView.findViewById(R.id.circleImageProfile);
         mImageViewCover = mView.findViewById(R.id.imageViewCover);
         mRecyclerView = mView.findViewById(R.id.recyclerViewMyPost);
@@ -126,8 +131,29 @@ public class ProfileFragment extends Fragment {
         });
         getUser();
         getPostUser();
+        checkIfExistPost();
         return  mView;
 
+    }
+
+    private void checkIfExistPost() {
+        mPostProvider.getPostByUser(mAuthProvider.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
+                int numberPost = value.size();
+                if (numberPost > 0){
+                    mTextViewExistPost.setText("Publicaciones");
+                    mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+                } else {
+                    mTextViewExistPost.setText("No hay publicaciones");
+                    mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorGray));
+
+                }
+
+
+            }
+        });
     }
 
     @Override

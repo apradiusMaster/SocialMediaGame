@@ -1,6 +1,8 @@
 package com.gustavo.socialmediagame.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.View;
@@ -8,11 +10,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
+import com.gustavo.socialmediagame.adapters.MyPostsAdapter;
+import com.gustavo.socialmediagame.models.Post;
+import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
 import com.squareup.picasso.Picasso;
@@ -28,9 +35,14 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView mTextViewEmail;
     TextView mTextViewPhone;
     TextView mTextViewPostNumber;
+    RecyclerView mRecyclerView;
+    MyPostsAdapter mAdapter;
 
     UsersProvider mUserProvider;
     PostProvider mPostProvider;
+    AuthProvider mAuthProvider;
+
+    String mExtraUserId;
 
 
 
@@ -45,11 +57,15 @@ public class UserProfileActivity extends AppCompatActivity {
         mTextViewEmail = findViewById(R.id.textViewEmail);
         mTextViewPhone = findViewById(R.id.textViewPhone);
         mTextViewPostNumber = findViewById(R.id.textViewPostNumber);
+        mRecyclerView = findViewById(R.id.recyclerViewMyPost);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(UserProfileActivity.this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
 
         mUserProvider = new UsersProvider();
         mPostProvider = new PostProvider();
+        mAuthProvider = new AuthProvider();
 
-        String  mExtraUserId = getIntent().getStringExtra("idUser");
+         mExtraUserId = getIntent().getStringExtra("idUser");
 
         mCircleImageBack.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,6 +76,24 @@ public class UserProfileActivity extends AppCompatActivity {
         });
         getUser(mExtraUserId);
         getPostUser(mExtraUserId);
+    }
+
+    public void onStart() {
+        super.onStart();
+        Query query = mPostProvider.getPostByUser(mExtraUserId);
+        FirestoreRecyclerOptions<Post> options =
+                new  FirestoreRecyclerOptions.Builder<Post>()
+                        .setQuery(query, Post.class)
+                        .build();
+        mAdapter = new MyPostsAdapter(options, UserProfileActivity.this);
+        mRecyclerView.setAdapter(mAdapter);
+        mAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdapter.stopListening();
     }
 
     public  void getUser(String userId){
