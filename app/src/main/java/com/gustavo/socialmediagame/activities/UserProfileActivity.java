@@ -87,16 +87,24 @@ public class UserProfileActivity extends AppCompatActivity {
         mPostProvider.getPostByUser(mExtraUserId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
-                int numberPost = value.size();
-                if (numberPost > 0){
-                    mTextViewExistPost.setText("Publicaciones");
-                    mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorPrimary));
 
-                } else {
-                    mTextViewExistPost.setText("No hay publicaciones");
-                    mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorGray));
+               /* if (error != null){ */
+                    if (value != null){
 
-                }
+                        int numberPost = value.size();
+                        if (numberPost > 0){
+                            mTextViewExistPost.setText("Publicaciones");
+                            mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+                        } else {
+                            mTextViewExistPost.setText("No hay publicaciones");
+                            mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorGray));
+
+                        }
+
+                   }
+              //  }
+
             }
         });
     }

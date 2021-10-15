@@ -131,36 +131,10 @@ public class ProfileFragment extends Fragment {
         });
         getUser();
         getPostUser();
-        checkIfExistPost();
+       checkIfExistPost();
         return  mView;
 
     }
-
-    private void checkIfExistPost() {
-        mPostProvider.getPostByUser(mAuthProvider.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
-               if (error != null){
-                   if (!value.isEmpty()){
-
-                       int numberPost = value.size();
-                       if (numberPost > 0){
-                           mTextViewExistPost.setText("Publicaciones");
-                           mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorPrimary));
-
-                       } else {
-                           mTextViewExistPost.setText("No hay publicaciones");
-                           mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorGray));
-
-                       }
-
-                   }
-               }
-
-            }
-        });
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -223,6 +197,30 @@ public class ProfileFragment extends Fragment {
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                 int numberPost = queryDocumentSnapshots.size();
                 mTextViewPostNumber.setText(String.valueOf(numberPost));
+            }
+        });
+    }
+
+    private void checkIfExistPost() {
+        mPostProvider.getPostByUser(mAuthProvider.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
+
+                  if( value  != null) {
+                      int numberPost = value.size();
+                      if (numberPost > 0) {
+                          mTextViewExistPost.setText("Publicaciones");
+                          mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+                      } else {
+                          mTextViewExistPost.setText("No hay publicaciones");
+                          mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorGray));
+
+                      }
+
+                  }
+
+
             }
         });
     }
