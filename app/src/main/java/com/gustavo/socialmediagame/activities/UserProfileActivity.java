@@ -1,5 +1,6 @@
 package com.gustavo.socialmediagame.activities;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -35,6 +38,7 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView mTextViewEmail;
     TextView mTextViewPhone;
     TextView mTextViewPostNumber;
+    TextView  mTextViewExistPost;
     RecyclerView mRecyclerView;
     MyPostsAdapter mAdapter;
 
@@ -57,6 +61,7 @@ public class UserProfileActivity extends AppCompatActivity {
         mTextViewEmail = findViewById(R.id.textViewEmail);
         mTextViewPhone = findViewById(R.id.textViewPhone);
         mTextViewPostNumber = findViewById(R.id.textViewPostNumber);
+        mTextViewExistPost = findViewById(R.id.textViewExistPost);
         mRecyclerView = findViewById(R.id.recyclerViewMyPost);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(UserProfileActivity.this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
@@ -76,6 +81,24 @@ public class UserProfileActivity extends AppCompatActivity {
         });
         getUser(mExtraUserId);
         getPostUser(mExtraUserId);
+        checkIfExistPost();
+    }
+    private void checkIfExistPost() {
+        mPostProvider.getPostByUser(mExtraUserId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
+                int numberPost = value.size();
+                if (numberPost > 0){
+                    mTextViewExistPost.setText("Publicaciones");
+                    mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorPrimary));
+
+                } else {
+                    mTextViewExistPost.setText("No hay publicaciones");
+                    mTextViewExistPost.setTextColor(getResources().getColor(R.color.colorGray));
+
+                }
+            }
+        });
     }
 
     public void onStart() {

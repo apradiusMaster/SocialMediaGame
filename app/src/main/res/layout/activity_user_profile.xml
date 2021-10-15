@@ -173,7 +173,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
 
-
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
@@ -184,7 +183,5 @@
         android:src="@drawable/ic_arrow_back"
         android:scaleType="centerCrop"
         android:layout_margin="15dp"/>
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
