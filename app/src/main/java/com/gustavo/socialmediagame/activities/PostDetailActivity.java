@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -85,6 +86,7 @@ public class PostDetailActivity extends AppCompatActivity {
     TextView mTextViewRelativeTime;
     TextView mTextViewLikes;
     LikesProvider mLikesProvider;
+    Toolbar mToolbar;
 
     String mIdUser;
 
@@ -108,6 +110,11 @@ public class PostDetailActivity extends AppCompatActivity {
         mRecyclerViewComment.setLayoutManager(linearLayoutManager);
         mTextViewRelativeTime = findViewById(R.id.textViewRelativeTime);
         mTextViewLikes = findViewById(R.id.textViewRelativeLike);
+        mToolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mPostProvider = new PostProvider();
         mUserProvider = new UsersProvider();

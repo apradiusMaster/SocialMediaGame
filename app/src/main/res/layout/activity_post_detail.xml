@@ -8,240 +8,272 @@
     tools:context=".activities.PostDetailActivity"
      >
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <FrameLayout
+            <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
-                android:layout_height="320dp">
-                <com.smarteist.autoimageslider.SliderView
-                    android:id="@+id/imageSlider"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    app:sliderAnimationDuration="600"
-                    app:sliderAutoCycleDirection="back_and_forth"
-                    app:sliderAutoCycleEnabled="true"
-                    app:sliderIndicatorAnimationDuration="600"
-                    app:sliderIndicatorGravity="center_horizontal|bottom"
-                    app:sliderIndicatorMargin="15dp"
-                    app:sliderIndicatorOrientation="horizontal"
-                    app:sliderIndicatorPadding="3dp"
-                    app:sliderIndicatorRadius="2dp"
-                    app:sliderIndicatorSelectedColor="#5A5A5A"
-                    app:sliderIndicatorUnselectedColor="#FFF"
-                    app:sliderScrollTimeInSec="1"
-                    app:sliderStartAutoCycle="true" />
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fabComment"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_chat"
-                    android:layout_gravity="right|bottom"
-                    android:layout_marginRight="15dp"/>
+                <com.google.android.material.appbar.CollapsingToolbarLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
+                    app:contentScrim="@color/colorAccent">
+
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="330dp"
+                        app:layout_collapseMode="parallax"
+                        android:transitionName="@string/transitionname_picture">>
+                        <com.smarteist.autoimageslider.SliderView
+                            android:id="@+id/imageSlider"
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            app:sliderAnimationDuration="600"
+                            app:sliderAutoCycleDirection="back_and_forth"
+                            app:sliderAutoCycleEnabled="true"
+                            app:sliderIndicatorAnimationDuration="600"
+                            app:sliderIndicatorGravity="center_horizontal|bottom"
+                            app:sliderIndicatorMargin="15dp"
+                            app:sliderIndicatorOrientation="horizontal"
+                            app:sliderIndicatorPadding="3dp"
+                            app:sliderIndicatorRadius="2dp"
+                            app:sliderIndicatorSelectedColor="#5A5A5A"
+                            app:sliderIndicatorUnselectedColor="#FFF"
+                            app:sliderScrollTimeInSec="1"
+                            app:sliderStartAutoCycle="true" />
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/fabComment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_chat"
+                            android:layout_gravity="right|bottom"
+                            android:layout_marginRight="15dp"
+                            android:layout_marginBottom="10dp"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="35dp"
+                            android:layout_marginLeft="15dp"
+                            android:layout_gravity="bottom"
+                            android:orientation="vertical">
+
+
+
+                            <TextView
+                                android:id="@+id/textViewRelativeTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="Hace 0 min "
+                                android:textStyle="bold"
+                                android:textColor="@color/colorAccent"/>
+
+                            <TextView
+                                android:id="@+id/textViewRelativeLike"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:text="likes"
+                                android:layout_marginTop="5dp"
+                                android:textStyle="italic"
+                                android:textColor="@color/colorAccent"/>
+
+
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                    <androidx.appcompat.widget.Toolbar
+                        android:id="@+id/toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="?attr/actionBarSize"
+                        app:layout_collapseMode="pin" />
+
+
+
+                </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_marginTop="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="35dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_gravity="bottom"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
 
 
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        android:layout_margin="20dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginBottom="20dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/circleImageViewProfile"
+                                android:layout_width="55dp"
+                                android:layout_height="55dp"
+                                android:src="@drawable/cover_image"
+                                app:civ_border_color="@color/colorGray"
+                                app:civ_border_width="2dp"/>
+
+                            <LinearLayout
+                                android:layout_width="120dp"
+                                android:layout_height="match_parent"
+                                android:orientation="vertical"
+                                android:layout_marginLeft="15dp"
+                                android:gravity="center">
+
+                                <TextView
+                                    android:id="@+id/textViewuserName"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Nombre de usuario"
+                                    android:textColor="@color/black"/>
+                                <TextView
+                                    android:id="@+id/textViewPhone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="72568923"
+                                    android:textColor="@color/black"/>
+                            </LinearLayout>
+
+                            <Button
+                                android:id="@+id/btnShowProfile"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="VER PERFIL"
+                                android:layout_marginLeft="10dp"
+                                android:background="@drawable/button_border"
+                                android:backgroundTint="@color/white"
+                                android:paddingRight="10dp"
+                                android:paddingLeft="10dp"/>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
 
                     <TextView
-                        android:id="@+id/textViewRelativeTime"
+                        android:id="@+id/textViewTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Hace 0 min "
+                        android:text="Titulo de juego"
+                        android:textSize="20dp"
                         android:textStyle="bold"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
                         android:textColor="@color/colorAccent"/>
+
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="135dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginTop="10dp"
+                        app:cardBackgroundColor="@color/colorAccent"
+                        app:cardCornerRadius="15dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center">
+
+                            <ImageView
+                                android:id="@+id/imageViewCategory"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                />
+
+                            <TextView
+                                android:id="@+id/textViewCategory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="PS4"
+                                android:textStyle="bold"
+                                android:textSize="17dp"
+                                android:textColor="@color/white"
+                                android:layout_marginLeft="15dp"/>
+
+                        </LinearLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGray"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"/>
 
                     <TextView
-                        android:id="@+id/textViewRelativeLike"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="likes"
-                        android:layout_marginTop="5dp"
-                        android:textStyle="italic"
-                        android:textColor="@color/colorAccent"/>
-
-
-                </LinearLayout>
-
-
-
-            </FrameLayout>
-
-
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_margin="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginBottom="20dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/circleImageViewProfile"
-                        android:layout_width="55dp"
-                        android:layout_height="55dp"
-                        android:src="@drawable/cover_image"
-                        app:civ_border_color="@color/colorGray"
-                        app:civ_border_width="2dp"/>
-
-                    <LinearLayout
-                        android:layout_width="120dp"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_marginLeft="15dp"
-                        android:gravity="center">
-
-                        <TextView
-                            android:id="@+id/textViewuserName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Nombre de usuario"
-                            android:textColor="@color/black"/>
-                        <TextView
-                            android:id="@+id/textViewPhone"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="72568923"
-                            android:textColor="@color/black"/>
-                    </LinearLayout>
-
-                    <Button
-                        android:id="@+id/btnShowProfile"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="VER PERFIL"
-                        android:layout_marginLeft="10dp"
-                        android:background="@drawable/button_border"
-                        android:backgroundTint="@color/white"
-                        android:paddingRight="10dp"
-                        android:paddingLeft="10dp"/>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:id="@+id/textViewTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Titulo de juego"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                android:textColor="@color/colorAccent"/>
-
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="135dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="10dp"
-                app:cardBackgroundColor="@color/colorAccent"
-                app:cardCornerRadius="15dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center">
-
-                    <ImageView
-                        android:id="@+id/imageViewCategory"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:text="DESCRIPCIÓN"
+                        android:textColor="@color/black"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
                         />
+                    <TextView
+                        android:id="@+id/textViewDescription"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Lorem Ipsum er rett og slett dummytekst fra og for trykkeindustrien. Lorem Ipsum har vært bransjens standard for dummytekst helt siden 1500-tallet, da en ukjent boktrykker stokket en mengde bokstaver for å lage et prøveeksemplar av en bok. Lorem Ipsum har tålt tidens tann usedvanlig godt, og har i tillegg til å bestå gjennom fem århundrer også tålt spranget over til elektronisk typografi uten vesentlige endringer. Lorem Ipsum ble gjort allment kjent i 1960-årene ved lanseringen av Letraset-ark med avsnitt fra Lorem Ipsum, og senere med sideombrekkingsprogrammet Aldus PageMaker som tok i bruk nettopp Lorem Ipsum for dummytekst."
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="25dp"/>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/colorGray"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"/>
+
 
                     <TextView
-                        android:id="@+id/textViewCategory"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="PS4"
+                        android:text="COMENTARIO"
+                        android:textColor="@color/black"
+                        android:textSize="16dp"
                         android:textStyle="bold"
-                        android:textSize="17dp"
-                        android:textColor="@color/white"
-                        android:layout_marginLeft="15dp"/>
+                        android:layout_marginTop="15dp"
+                        android:layout_marginLeft="25dp"
+                        android:layout_marginRight="25dp"
+                        />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewComment"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"/>
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorGray"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="DESCRIPCIÓN"
-                android:textColor="@color/black"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                />
-            <TextView
-                android:id="@+id/textViewDescription"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Lorem Ipsum er rett og slett dummytekst fra og for trykkeindustrien. Lorem Ipsum har vært bransjens standard for dummytekst helt siden 1500-tallet, da en ukjent boktrykker stokket en mengde bokstaver for å lage et prøveeksemplar av en bok. Lorem Ipsum har tålt tidens tann usedvanlig godt, og har i tillegg til å bestå gjennom fem århundrer også tålt spranget over til elektronisk typografi uten vesentlige endringer. Lorem Ipsum ble gjort allment kjent i 1960-årene ved lanseringen av Letraset-ark med avsnitt fra Lorem Ipsum, og senere med sideombrekkingsprogrammet Aldus PageMaker som tok i bruk nettopp Lorem Ipsum for dummytekst."
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="25dp"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/colorGray"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"/>
+            </androidx.core.widget.NestedScrollView>
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="COMENTARIO"
-                android:textColor="@color/black"
-                android:textSize="16dp"
-                android:textStyle="bold"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="25dp"
-                />
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewComment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
 
-        </LinearLayout>
 
-    </ScrollView>
+
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,11 +1,14 @@
 package com.gustavo.socialmediagame.activities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +34,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileActivity extends AppCompatActivity {
 
-    CircleImageView mCircleImageBack;
+
     ImageView mImageViewCover;
     CircleImageView mCircleImageViewProfile;
     TextView mTextViewUserName;
@@ -45,16 +48,15 @@ public class UserProfileActivity extends AppCompatActivity {
     UsersProvider mUserProvider;
     PostProvider mPostProvider;
     AuthProvider mAuthProvider;
+    Toolbar mToolbar;
 
     String mExtraUserId;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
-        mCircleImageBack = findViewById(R.id.circleImageBack);
+
         mImageViewCover = findViewById(R.id.imageViewCover);
         mCircleImageViewProfile = findViewById(R.id.circleImageProfile);
         mTextViewUserName = findViewById(R.id.textViewuserName);
@@ -63,6 +65,12 @@ public class UserProfileActivity extends AppCompatActivity {
         mTextViewPostNumber = findViewById(R.id.textViewPostNumber);
         mTextViewExistPost = findViewById(R.id.textViewExistPost);
         mRecyclerView = findViewById(R.id.recyclerViewMyPost);
+        mToolbar = findViewById(R.id.toolbar);
+
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(UserProfileActivity.this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
 
@@ -72,13 +80,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
          mExtraUserId = getIntent().getStringExtra("idUser");
 
-        mCircleImageBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
 
-        });
         getUser(mExtraUserId);
         getPostUser(mExtraUserId);
         checkIfExistPost();
@@ -170,5 +172,13 @@ public class UserProfileActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            finish();
+        }
+        return true;
     }
 }
