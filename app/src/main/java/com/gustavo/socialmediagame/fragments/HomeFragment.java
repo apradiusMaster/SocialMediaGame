@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,6 +30,7 @@ import com.gustavo.socialmediagame.adapters.PostsAdapter;
 import com.gustavo.socialmediagame.models.Post;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
+import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.zip.Inflater;
 
@@ -36,7 +39,7 @@ import java.util.zip.Inflater;
  * Use the {@link HomeFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements MaterialSearchBar.OnSearchActionListener {
 
 
 
@@ -51,12 +54,14 @@ public class HomeFragment extends Fragment {
     private String mParam2;
 
     View mView;
+    MaterialSearchBar mSearchBar;
     FloatingActionButton mFab;
     Toolbar mToolbar;
     AuthProvider mAuthProvider;
     RecyclerView mRecyclerView;
     PostProvider  mPostProvider;
     PostsAdapter mPostAdapter;
+    PostsAdapter mPostAdapterSearch;
 
 
 
@@ -82,6 +87,33 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
+    public  void searchByTitle(String title){
+
+        Query query = mPostProvider.getPostByTitle(title);
+        FirestoreRecyclerOptions<Post> options =
+                new  FirestoreRecyclerOptions.Builder<Post>()
+                        .setQuery(query, Post.class)
+                        .build();
+        mPostAdapterSearch = new PostsAdapter(options, getContext());
+        mPostAdapterSearch.notifyDataSetChanged();
+        mRecyclerView.setAdapter(mPostAdapterSearch);
+        mPostAdapterSearch.startListening();
+
+    }
+
+    public void getAllPost(){
+        Query query = mPostProvider.getAll();
+        FirestoreRecyclerOptions<Post> options =
+                new  FirestoreRecyclerOptions.Builder<Post>()
+                        .setQuery(query, Post.class)
+                        .build();
+        mPostAdapter = new PostsAdapter(options, getContext());
+        mPostAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(mPostAdapter);
+        mPostAdapter.startListening();
+
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,14 +131,27 @@ public class HomeFragment extends Fragment {
         mFab = mView.findViewById(R.id.fab);
         mToolbar = mView.findViewById(R.id.toolbar);
         mRecyclerView = mView.findViewById(R.id.recyclerViewHome);
+        mSearchBar = mView.findViewById(R.id.searchBar);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-            ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Publicaciones");
 
         setHasOptionsMenu(true);
         mAuthProvider = new AuthProvider();
         mPostProvider = new PostProvider();
+
+        mSearchBar.setOnSearchActionListener(this);
+
+        mSearchBar.inflateMenu(R.menu.main_menu);
+        mSearchBar.getMenu().setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if (item.getItemId() == R.id.itemLogout){
+                    logout();
+
+                }
+                return true;
+            }
+        });
 
 
         mFab.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +181,9 @@ public class HomeFragment extends Fragment {
     public void onStop() {
         super.onStop();
         mPostAdapter.stopListening();
+        if (mPostAdapterSearch != null){
+            mPostAdapterSearch.stopListening();
+        }
     }
 
     private void goToPost() {
@@ -143,26 +191,26 @@ public class HomeFragment extends Fragment {
         startActivity(intent);
     }
 
-    @Override
-    public void onCreateOptionsMenu( @NonNull Menu menu,  @NonNull MenuInflater inflater) {
-
-        inflater.inflate(R.menu.main_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected( MenuItem item) {
-        if (item.getItemId() == R.id.itemLogout){
-            logout();
-
-        }
-        return true;
-    }
-
     private void logout() {
         mAuthProvider.logout();
         Intent intent = new Intent(getContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+    }
+
+    @Override
+    public void onSearchStateChanged(boolean enabled) {
+        getAllPost();
+    }
+
+    @Override
+    public void onSearchConfirmed(CharSequence text) {
+
+        searchByTitle(text.toString().toLowerCase());
+    }
+
+    @Override
+    public void onButtonClicked(int buttonCode) {
+
     }
 }

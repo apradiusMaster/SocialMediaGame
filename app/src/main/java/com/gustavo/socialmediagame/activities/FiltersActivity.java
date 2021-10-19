@@ -3,11 +3,13 @@ package com.gustavo.socialmediagame.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -27,6 +29,7 @@ public class FiltersActivity extends AppCompatActivity {
     PostProvider mPostProvider;
     PostsAdapter mPostAdapter;
 
+    TextView mTextViewNumberFilter;
     Toolbar mToolbar;
 
 
@@ -38,11 +41,14 @@ public class FiltersActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(FiltersActivity.this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
         mExtraCategory = getIntent().getStringExtra("category");
+        mTextViewNumberFilter = findViewById(R.id.textViewNumberFilter);
         mToolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Filtro");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        mRecyclerView.setLayoutManager(new GridLayoutManager( FiltersActivity.this,2));
 
         mAuthProvider = new AuthProvider();
         mPostProvider = new PostProvider();
@@ -58,7 +64,7 @@ public class FiltersActivity extends AppCompatActivity {
                 new  FirestoreRecyclerOptions.Builder<Post>()
                         .setQuery(query, Post.class)
                         .build();
-        mPostAdapter = new PostsAdapter(options, FiltersActivity.this);
+        mPostAdapter = new PostsAdapter(options, FiltersActivity.this, mTextViewNumberFilter);
         mRecyclerView.setAdapter(mPostAdapter);
         mPostAdapter.startListening();
     }
