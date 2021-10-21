@@ -14,18 +14,28 @@ import com.gustavo.socialmediagame.fragments.ChatsFragment;
 import com.gustavo.socialmediagame.fragments.FiltersFragment;
 import com.gustavo.socialmediagame.fragments.HomeFragment;
 import com.gustavo.socialmediagame.fragments.ProfileFragment;
+import com.gustavo.socialmediagame.providers.AuthProvider;
+import com.gustavo.socialmediagame.providers.TokenProvider;
 
 public class HomeActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigation;
+    TokenProvider mTokenProvider;
+    AuthProvider mAuthProvider;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
+
+        mTokenProvider = new TokenProvider();
+        mAuthProvider = new AuthProvider();
         openFragment(new HomeFragment());
+        createToken();
     }
 
     public void openFragment(Fragment fragment) {
@@ -57,4 +67,8 @@ public class HomeActivity extends AppCompatActivity {
                     return true;
                 }
             };
+
+    public  void  createToken(){
+        mTokenProvider.create(mAuthProvider.getUid());
+    }
 }

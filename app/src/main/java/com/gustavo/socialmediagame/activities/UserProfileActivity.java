@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
@@ -44,6 +46,7 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView  mTextViewExistPost;
     RecyclerView mRecyclerView;
     MyPostsAdapter mAdapter;
+    FloatingActionButton  mFabChat;
 
     UsersProvider mUserProvider;
     PostProvider mPostProvider;
@@ -65,6 +68,7 @@ public class UserProfileActivity extends AppCompatActivity {
         mTextViewPostNumber = findViewById(R.id.textViewPostNumber);
         mTextViewExistPost = findViewById(R.id.textViewExistPost);
         mRecyclerView = findViewById(R.id.recyclerViewMyPost);
+        mFabChat = findViewById(R.id.fabChat);
         mToolbar = findViewById(R.id.toolbar);
 
         setSupportActionBar(mToolbar);
@@ -80,11 +84,31 @@ public class UserProfileActivity extends AppCompatActivity {
 
          mExtraUserId = getIntent().getStringExtra("idUser");
 
+         if (mAuthProvider.getUid() == mExtraUserId){
+             mFabChat.setVisibility(View.GONE);
+         }
+
+         mFabChat.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 gotoChatActivity();
+             }
+         });
+
 
         getUser(mExtraUserId);
         getPostUser(mExtraUserId);
         checkIfExistPost();
     }
+
+    private void gotoChatActivity() {
+
+        Intent intent = new Intent(UserProfileActivity.this, ChatActivity.class);
+        intent.putExtra("idUser1", mAuthProvider.getUid());
+        intent.putExtra("idUser2", mExtraUserId);
+        startActivity(intent);
+    }
+
     private void checkIfExistPost() {
         mPostProvider.getPostByUser(mExtraUserId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -147,11 +171,22 @@ public class UserProfileActivity extends AppCompatActivity {
                             mTextViewEmail.setText(documentSnapshot.getString("email"));
                         }
                         if (documentSnapshot.contains("image_cover")){
-                            Picasso.with(UserProfileActivity.this).load(documentSnapshot.getString("image_cover")).into(mImageViewCover);
+                            String imageCover = documentSnapshot.getString("image_cover");
+                            if (imageCover != null){
+                                if (!imageCover.isEmpty()){
+                                    Picasso.with(UserProfileActivity.this).load(imageCover).into(mImageViewCover);
+                                }
+                            }
+
                         }
 
                         if (documentSnapshot.contains("image_profile")){
-                            Picasso.with(UserProfileActivity.this).load(documentSnapshot.getString("image_profile")).into(mCircleImageViewProfile);
+                            String imageProfile = documentSnapshot.getString("image_profile");
+                            if (imageProfile != null){
+                                if (!imageProfile.isEmpty()){
+                                    Picasso.with(UserProfileActivity.this).load(imageProfile).into(mCircleImageViewProfile);
+                                }
+                            }
                         }
 
                 } else{
