@@ -84,7 +84,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
          mExtraUserId = getIntent().getStringExtra("idUser");
 
-         if (mAuthProvider.getUid() == mExtraUserId){
+         if (mAuthProvider.getUid().equals(mExtraUserId)){
              mFabChat.setVisibility(View.GONE);
          }
 
