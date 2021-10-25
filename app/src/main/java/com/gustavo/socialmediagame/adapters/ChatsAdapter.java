@@ -47,9 +47,6 @@ public class ChatsAdapter extends FirestoreRecyclerAdapter<Chat, ChatsAdapter.Vi
 
         getUserInfo(chatId, holder);
 
-
-
-
     }
 
     private void getUserInfo(String idUser, ViewHolder holder) {
