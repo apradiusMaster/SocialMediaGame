@@ -16,6 +16,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.gustavo.socialmediagame.R;
 import com.gustavo.socialmediagame.models.Chat;
 import com.gustavo.socialmediagame.models.Comment;
+import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
 import com.squareup.picasso.Picasso;
 
@@ -34,10 +35,13 @@ public class ChatsAdapter extends FirestoreRecyclerAdapter<Chat, ChatsAdapter.Vi
 
     Context context;
     UsersProvider mUserProvider;
+    AuthProvider mAuthProvider;
     public ChatsAdapter(@NonNull @NotNull FirestoreRecyclerOptions<Chat> options, Context context) {
         super(options);
         this.context = context;
         mUserProvider = new UsersProvider();
+        mAuthProvider = new AuthProvider();
+
     }
 
     @Override
@@ -45,8 +49,11 @@ public class ChatsAdapter extends FirestoreRecyclerAdapter<Chat, ChatsAdapter.Vi
         DocumentSnapshot document =  getSnapshots().getSnapshot(position);
         String chatId = document.getId();
 
-        getUserInfo(chatId, holder);
-
+        if (mAuthProvider.getUid().equals(chat.getIdUser1())){
+            getUserInfo(chat.getIdUser2(), holder);
+        } else {
+             getUserInfo(chat.getIdUser1(), holder);
+          }
     }
 
     private void getUserInfo(String idUser, ViewHolder holder) {
