@@ -1,5 +1,6 @@
 package com.gustavo.socialmediagame.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -8,14 +9,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
 import com.gustavo.socialmediagame.models.Chat;
+import com.gustavo.socialmediagame.models.Message;
+import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.ChatsProvider;
+import com.gustavo.socialmediagame.providers.MessagesProvider;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,7 +33,15 @@ public class ChatActivity extends AppCompatActivity {
 
     String mExtraIdUser1;
     String mExtraIdUser2;
+    String mExtraIdChat;
+
+    TextView mTextViewMessage;
+    ImageView mImageViewSendMessage;
+
+
     ChatsProvider mChatProvider;
+    MessagesProvider mMessagesProvider;
+    AuthProvider mAuthProvider;
 
     View mActionBarView;
 
@@ -34,11 +51,64 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
         showCustomToolbar(R.layout.custom_chat_toolbar);
 
+        mTextViewMessage = findViewById(R.id.textViewMessage);
+        mImageViewSendMessage = findViewById(R.id.imageViewSendMessage);
+
         mExtraIdUser1 = getIntent().getStringExtra("idUser1");
         mExtraIdUser2 = getIntent().getStringExtra("idUser2");
+        mExtraIdChat = getIntent().getStringExtra("idChat");
 
         mChatProvider = new ChatsProvider();
+        mMessagesProvider = new MessagesProvider();
+        mAuthProvider = new AuthProvider();
         checkIfChatExist();
+
+
+        mImageViewSendMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage();
+            }
+        });
+    }
+
+    private void sendMessage() {
+
+         String  textMessage = mTextViewMessage.getText().toString();
+
+         if (!textMessage.isEmpty()){
+
+             Message message = new Message();
+
+             message.setId(mExtraIdChat);
+             if (mAuthProvider.getUid().equals(mExtraIdUser1)){
+                 message.setIdSender(mExtraIdUser1);
+                 message.setIdReceiver(mExtraIdUser2);
+             } else {
+                 message.setIdSender(mExtraIdUser2);
+                 message.setIdReceiver(mExtraIdUser1);
+               }
+             message.setTimestamp(new Date().getTime());
+             message.setVieweb(false);
+             message.setIdChat(mExtraIdChat);
+             message.setMessage(textMessage);
+
+             mMessagesProvider.create(message).addOnCompleteListener(new OnCompleteListener<Void>() {
+                 @Override
+                 public void onComplete(@NonNull @NotNull Task<Void> task) {
+
+                     if (task.isSuccessful()){
+                         mTextViewMessage.setText("");
+                         Toast.makeText(ChatActivity.this, "Se envio el mensaje", Toast.LENGTH_SHORT).show();
+                     } else {
+                         Toast.makeText(ChatActivity.this, "No se pudo enviar el mensaje", Toast.LENGTH_SHORT).show();
+                     }
+                 }
+             });
+
+         } else {
+             Toast.makeText(this, "Escriba el mensaje", Toast.LENGTH_SHORT).show();
+         }
     }
 
     private void showCustomToolbar(int custom_chat_toolbar) {

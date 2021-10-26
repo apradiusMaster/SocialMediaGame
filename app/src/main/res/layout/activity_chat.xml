@@ -28,6 +28,7 @@
         android:orientation="horizontal"
         android:layout_gravity="bottom">
         <EditText
+            android:id="@+id/textViewMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -37,6 +38,7 @@
             android:background="@drawable/custom_edittext_chat"/>
 
             <ImageView
+                android:id="@+id/imageViewSendMessage"
                 android:layout_width="45dp"
                 android:layout_height="45dp"
                 android:src="@mipmap/ic_send_padding"
