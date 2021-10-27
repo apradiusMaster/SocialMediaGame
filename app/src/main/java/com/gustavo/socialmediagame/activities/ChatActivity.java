@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,14 +15,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
+import com.gustavo.socialmediagame.adapters.MessagesAdapter;
+import com.gustavo.socialmediagame.adapters.MyPostsAdapter;
 import com.gustavo.socialmediagame.models.Chat;
 import com.gustavo.socialmediagame.models.Message;
+import com.gustavo.socialmediagame.models.Post;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.ChatsProvider;
 import com.gustavo.socialmediagame.providers.MessagesProvider;
@@ -48,10 +55,8 @@ public class ChatActivity extends AppCompatActivity {
     TextView mTextViewRelativeTime;
     ImageView mImageViewBack;
 
-
-
-
-
+    RecyclerView mRecyclerView;
+    MessagesAdapter mMessagesAdapter;
 
     ChatsProvider mChatProvider;
     MessagesProvider mMessagesProvider;
@@ -69,12 +74,16 @@ public class ChatActivity extends AppCompatActivity {
         mUsersProvider = new UsersProvider();
         mAuthProvider = new AuthProvider();
 
+        mRecyclerView = findViewById(R.id.recyclerViewMessage);
         mTextViewMessage = findViewById(R.id.textViewMessage);
         mImageViewSendMessage = findViewById(R.id.imageViewSendMessage);
 
         mExtraIdUser1 = getIntent().getStringExtra("idUser1");
         mExtraIdUser2 = getIntent().getStringExtra("idUser2");
         mExtraIdChat = getIntent().getStringExtra("idChat");
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
 
 
         showCustomToolbar(R.layout.custom_chat_toolbar);
@@ -91,6 +100,24 @@ public class ChatActivity extends AppCompatActivity {
                 sendMessage();
             }
         });
+    }
+
+    public void onStart() {
+        super.onStart();
+        Query query = mMessagesProvider.getMessageByChat(mExtraIdChat);
+        FirestoreRecyclerOptions<Message> options =
+                new  FirestoreRecyclerOptions.Builder<Message>()
+                        .setQuery(query, Message.class)
+                        .build();
+        mMessagesAdapter = new MessagesAdapter(options, ChatActivity.this);
+        mRecyclerView.setAdapter(mMessagesAdapter);
+        mMessagesAdapter.startListening();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMessagesAdapter.stopListening();
     }
 
     private void sendMessage() {
@@ -120,6 +147,7 @@ public class ChatActivity extends AppCompatActivity {
 
                      if (task.isSuccessful()){
                          mTextViewMessage.setText("");
+                         mMessagesAdapter.notifyDataSetChanged();
                          Toast.makeText(ChatActivity.this, "Se envio el mensaje", Toast.LENGTH_SHORT).show();
                      } else {
                          Toast.makeText(ChatActivity.this, "No se pudo enviar el mensaje", Toast.LENGTH_SHORT).show();
@@ -193,11 +221,14 @@ public class ChatActivity extends AppCompatActivity {
         mChatProvider.getChatByUser1AndUser2(mExtraIdUser1,mExtraIdUser2).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
                 int size = queryDocumentSnapshots.size();
                 if (size == 0){
                    // Toast.makeText(ChatActivity.this, "No existe chat", Toast.LENGTH_SHORT).show();
-                    mExtraIdChat = queryDocumentSnapshots.getDocuments().get(0).getId();
+
                     createChat();
+                } else {
+                    mExtraIdChat = queryDocumentSnapshots.getDocuments().get(0).getId();
                 }
             }
         });
