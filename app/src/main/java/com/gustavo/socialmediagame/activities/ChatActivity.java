@@ -54,14 +54,15 @@ public class ChatActivity extends AppCompatActivity {
     TextView mTextViewUserName;
     TextView mTextViewRelativeTime;
     ImageView mImageViewBack;
-
-    RecyclerView mRecyclerView;
-    MessagesAdapter mMessagesAdapter;
-
+    
     ChatsProvider mChatProvider;
     MessagesProvider mMessagesProvider;
     UsersProvider mUsersProvider;
     AuthProvider mAuthProvider;
+
+    RecyclerView mRecyclerView;
+    MessagesAdapter mMessagesAdapter;
+    LinearLayoutManager mLinearLayoutManager;
 
     View mActionBarView;
 
@@ -82,9 +83,9 @@ public class ChatActivity extends AppCompatActivity {
         mExtraIdUser2 = getIntent().getStringExtra("idUser2");
         mExtraIdChat = getIntent().getStringExtra("idChat");
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatActivity.this);
-        mRecyclerView.setLayoutManager(linearLayoutManager);
-
+         mLinearLayoutManager = new LinearLayoutManager(ChatActivity.this);
+         mLinearLayoutManager.setStackFromEnd(true);
+        mRecyclerView.setLayoutManager(mLinearLayoutManager);
 
         showCustomToolbar(R.layout.custom_chat_toolbar);
 
@@ -104,6 +105,21 @@ public class ChatActivity extends AppCompatActivity {
 
     public void onStart() {
         super.onStart();
+
+        if (mExtraIdChat !=  null){
+            if (!mExtraIdChat.isEmpty()){
+                getMessageChat();
+            }
+        }
+
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        mMessagesAdapter.stopListening();
+    }
+
+    private void getMessageChat(){
         Query query = mMessagesProvider.getMessageByChat(mExtraIdChat);
         FirestoreRecyclerOptions<Message> options =
                 new  FirestoreRecyclerOptions.Builder<Message>()
@@ -112,13 +128,22 @@ public class ChatActivity extends AppCompatActivity {
         mMessagesAdapter = new MessagesAdapter(options, ChatActivity.this);
         mRecyclerView.setAdapter(mMessagesAdapter);
         mMessagesAdapter.startListening();
+        mMessagesAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+
+                int numberMessage = mMessagesAdapter.getItemCount();
+                int lastMessagePosition = mLinearLayoutManager.findLastVisibleItemPosition();
+
+                if (lastMessagePosition == -1 || (positionStart >= (numberMessage -1) && lastMessagePosition == (positionStart -1))){
+                    mRecyclerView.scrollToPosition(positionStart);
+                }
+
+            }
+        });
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        mMessagesAdapter.stopListening();
-    }
 
     private void sendMessage() {
 
@@ -229,6 +254,7 @@ public class ChatActivity extends AppCompatActivity {
                     createChat();
                 } else {
                     mExtraIdChat = queryDocumentSnapshots.getDocuments().get(0).getId();
+                    getMessageChat();
                 }
             }
         });

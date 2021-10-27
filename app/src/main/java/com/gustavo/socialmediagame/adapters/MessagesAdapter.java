@@ -1,5 +1,6 @@
 package com.gustavo.socialmediagame.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<Message, MessagesA
         mAuthProvider = new AuthProvider();
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     protected void onBindViewHolder(@NonNull @NotNull ViewHolder holder, int position, @NonNull @NotNull Message model) {
 
@@ -66,9 +68,10 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<Message, MessagesA
             params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
             params.setMargins(0, 0, 150,0);
             holder.linearLayoutMessage.setLayoutParams(params);
-            holder.linearLayoutMessage.setPadding(30, 20, -40, 20);
+            holder.linearLayoutMessage.setPadding(30, 20, 30, 20);
             holder.linearLayoutMessage.setBackground(context.getResources().getDrawable(R.drawable.rounded_linear_layout_grey));
-            holder.imageViewVieweb.setVisibility(View.VISIBLE);
+            holder.imageViewVieweb.setVisibility(View.GONE);
+            holder.textViewMessage.setTextColor(R.color.black);
         }
 
     }
