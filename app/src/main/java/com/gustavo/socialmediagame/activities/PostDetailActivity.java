@@ -29,6 +29,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
@@ -47,6 +48,7 @@ import com.gustavo.socialmediagame.providers.PostProvider;
 import com.gustavo.socialmediagame.providers.TokenProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
 import com.gustavo.socialmediagame.utils.RelativeTime;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
 import com.smarteist.autoimageslider.SliderView;
@@ -99,6 +101,8 @@ public class PostDetailActivity extends AppCompatActivity {
     Toolbar mToolbar;
 
     String mIdUser;
+
+    ListenerRegistration mListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,7 +162,7 @@ public class PostDetailActivity extends AppCompatActivity {
     }
 
     private void getNumberLikes() {
-        mLikesProvider.getLikeByPost(mExtraPostId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+     mListener = mLikesProvider.getLikeByPost(mExtraPostId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
             /*   if (error != null){*/
@@ -188,12 +192,28 @@ public class PostDetailActivity extends AppCompatActivity {
         mCommentAdapter = new CommentAdapter(options, PostDetailActivity.this);
         mRecyclerViewComment.setAdapter(mCommentAdapter);
         mCommentAdapter.startListening();
+        ViewebMessageHelper.updateOnline(true, PostDetailActivity.this);
+
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         mCommentAdapter.stopListening();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, PostDetailActivity.this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mListener != null){
+            mListener.remove();
+        }
     }
 
     private void showDialogComment() {

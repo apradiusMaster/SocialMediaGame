@@ -21,6 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -30,6 +31,7 @@ import com.gustavo.socialmediagame.models.Post;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -45,6 +47,7 @@ public class UserProfileActivity extends AppCompatActivity {
     TextView mTextViewPostNumber;
     TextView  mTextViewExistPost;
     RecyclerView mRecyclerView;
+    ListenerRegistration mListener;
     MyPostsAdapter mAdapter;
     FloatingActionButton  mFabChat;
 
@@ -110,7 +113,7 @@ public class UserProfileActivity extends AppCompatActivity {
     }
 
     private void checkIfExistPost() {
-        mPostProvider.getPostByUser(mExtraUserId).addSnapshotListener(new EventListener<QuerySnapshot>() {
+       mListener =  mPostProvider.getPostByUser(mExtraUserId).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
 
@@ -145,12 +148,27 @@ public class UserProfileActivity extends AppCompatActivity {
         mAdapter = new MyPostsAdapter(options, UserProfileActivity.this);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.startListening();
+        ViewebMessageHelper.updateOnline(true, UserProfileActivity.this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mAdapter.stopListening();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, UserProfileActivity.this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mListener != null){
+            mListener.remove();
+        }
     }
 
     public  void getUser(String userId){

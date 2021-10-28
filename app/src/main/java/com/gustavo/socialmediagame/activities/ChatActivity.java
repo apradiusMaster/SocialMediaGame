@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
@@ -36,6 +37,7 @@ import com.gustavo.socialmediagame.providers.ChatsProvider;
 import com.gustavo.socialmediagame.providers.MessagesProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
 import com.gustavo.socialmediagame.utils.RelativeTime;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -67,6 +69,7 @@ public class ChatActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     MessagesAdapter mMessagesAdapter;
     LinearLayoutManager mLinearLayoutManager;
+    ListenerRegistration mListener;
 
     View mActionBarView;
 
@@ -116,11 +119,27 @@ public class ChatActivity extends AppCompatActivity {
             }
         }
 
+        ViewebMessageHelper.updateOnline(true, ChatActivity.this);
+
     }
     @Override
     public void onStop() {
         super.onStop();
         mMessagesAdapter.stopListening();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, ChatActivity.this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mListener != null){
+            mListener.remove();
+        }
     }
 
     private void getMessageChat(){
@@ -224,7 +243,7 @@ public class ChatActivity extends AppCompatActivity {
              idUserInfo = mExtraIdUser1;
           }
 
-        mUsersProvider.getUserRealTime(idUserInfo).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+        mListener = mUsersProvider.getUserRealTime(idUserInfo).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable DocumentSnapshot documentSnapshot, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
                 if (documentSnapshot.exists()){

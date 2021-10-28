@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
 import com.gustavo.socialmediagame.activities.PostDetailActivity;
@@ -40,6 +41,7 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
     LikesProvider mLikeProvider;
     AuthProvider mAuthProvider;
     TextView mTextviewNumberFilter;
+    ListenerRegistration mListener;
 
 
     public PostsAdapter(@NonNull @NotNull FirestoreRecyclerOptions<Post> options, Context context) {
@@ -105,7 +107,7 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
     }
 
     private void getNumberLikeByPost(String idPost, ViewHolder view){
-        mLikeProvider.getLikeByPost(idPost).addSnapshotListener(new EventListener<QuerySnapshot>() {
+       mListener =   mLikeProvider.getLikeByPost(idPost).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
 
@@ -120,6 +122,10 @@ public class PostsAdapter extends FirestoreRecyclerAdapter<Post, PostsAdapter.Vi
             }
         });
 
+    }
+
+    public ListenerRegistration getListener(){
+        return  mListener;
     }
 
     private void like(Like like, ViewHolder view){

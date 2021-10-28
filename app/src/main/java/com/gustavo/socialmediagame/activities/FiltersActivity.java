@@ -19,6 +19,7 @@ import com.gustavo.socialmediagame.adapters.PostsAdapter;
 import com.gustavo.socialmediagame.models.Post;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 
 public class FiltersActivity extends AppCompatActivity {
 
@@ -67,12 +68,19 @@ public class FiltersActivity extends AppCompatActivity {
         mPostAdapter = new PostsAdapter(options, FiltersActivity.this, mTextViewNumberFilter);
         mRecyclerView.setAdapter(mPostAdapter);
         mPostAdapter.startListening();
+        ViewebMessageHelper.updateOnline(true, FiltersActivity.this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
         mPostAdapter.stopListening();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, FiltersActivity.this);
     }
 
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

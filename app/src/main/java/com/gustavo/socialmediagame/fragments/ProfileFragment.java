@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
@@ -56,6 +57,7 @@ public class ProfileFragment extends Fragment {
     ImageView mImageViewCover;
     CircleImageView mCircleImageProfile;
     RecyclerView mRecyclerView;
+    ListenerRegistration mListener;
 
     MyPostsAdapter mAdapter;
 
@@ -154,6 +156,14 @@ public class ProfileFragment extends Fragment {
         mAdapter.stopListening();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mListener != null){
+            mListener.remove();
+        }
+    }
+
     private void getUser() {
         mUserProvider.getUser(mAuthProvider.getUid()).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -202,7 +212,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void checkIfExistPost() {
-        mPostProvider.getPostByUser(mAuthProvider.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mListener = mPostProvider.getPostByUser(mAuthProvider.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable @org.jetbrains.annotations.Nullable QuerySnapshot value, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
 

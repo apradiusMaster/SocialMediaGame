@@ -17,6 +17,7 @@ import com.gustavo.socialmediagame.fragments.ProfileFragment;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.TokenProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -44,17 +45,13 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        updateOnline(true);
+        ViewebMessageHelper.updateOnline(true, HomeActivity.this);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        updateOnline(false);
-    }
-
-    private void updateOnline(boolean b) {
-        mUsersProvider.updateOnline(mAuthProvider.getUid(), b);
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, HomeActivity.this);
     }
 
     public void openFragment(Fragment fragment) {

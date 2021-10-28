@@ -31,6 +31,7 @@ import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.ImageProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
 import com.gustavo.socialmediagame.utils.FileUtil;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -140,6 +141,18 @@ public class EditProfileActivity extends AppCompatActivity {
 
         getUser();
         
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ViewebMessageHelper.updateOnline(true, EditProfileActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, EditProfileActivity.this);
     }
 
     private void getUser(){

@@ -31,6 +31,7 @@ import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.ImageProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
 import com.gustavo.socialmediagame.utils.FileUtil;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 import com.squareup.picasso.Picasso;
 
 
@@ -177,6 +178,19 @@ public class PostActivity extends AppCompatActivity {
                 //openGallery(GALLEY_REQUEST_CODE_2);
             }
         });
+    }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        ViewebMessageHelper.updateOnline(true, PostActivity.this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ViewebMessageHelper.updateOnline(false, PostActivity.this);
     }
 
     private void selectOptionImage(int numberImage) {
