@@ -45,7 +45,7 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<Message, MessagesA
         String MessageId = document.getId();
         holder.textViewMessage.setText(model.getMessage());
 
-        String relativeTime = RelativeTime.getTimeAgo(model.getTimestamp(), context);
+        String relativeTime = RelativeTime.timeFormatAMPM(model.getTimestamp(), context);
         holder.textViewDate.setText(relativeTime);
 
         if (model.getIdSender().equals(mAuthProvider.getUid())){
@@ -56,7 +56,7 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<Message, MessagesA
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
             params.setMargins(150, 0, 0,0);
             holder.linearLayoutMessage.setLayoutParams(params);
-            holder.linearLayoutMessage.setPadding(30, 20, 25, 20);
+            holder.linearLayoutMessage.setPadding(30, 20, 0, 20);
             holder.linearLayoutMessage.setBackground(context.getResources().getDrawable(R.drawable.rounded_linear_layout));
             holder.imageViewVieweb.setVisibility(View.VISIBLE);
         }
@@ -72,6 +72,12 @@ public class MessagesAdapter extends FirestoreRecyclerAdapter<Message, MessagesA
             holder.linearLayoutMessage.setBackground(context.getResources().getDrawable(R.drawable.rounded_linear_layout_grey));
             holder.imageViewVieweb.setVisibility(View.GONE);
             holder.textViewMessage.setTextColor(R.color.black);
+        }
+
+        if (model.isVieweb()){
+            holder.imageViewVieweb.setImageResource(R.drawable.icon_check_blue);
+        } else {
+            holder.imageViewVieweb.setImageResource(R.drawable.icon_check_gray);
         }
 
     }

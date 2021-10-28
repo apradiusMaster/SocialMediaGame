@@ -16,12 +16,14 @@ import com.gustavo.socialmediagame.fragments.HomeFragment;
 import com.gustavo.socialmediagame.fragments.ProfileFragment;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.TokenProvider;
+import com.gustavo.socialmediagame.providers.UsersProvider;
 
 public class HomeActivity extends AppCompatActivity {
 
     BottomNavigationView bottomNavigation;
     TokenProvider mTokenProvider;
     AuthProvider mAuthProvider;
+    UsersProvider mUsersProvider;
 
 
     @Override
@@ -34,8 +36,25 @@ public class HomeActivity extends AppCompatActivity {
 
         mTokenProvider = new TokenProvider();
         mAuthProvider = new AuthProvider();
+        mUsersProvider = new UsersProvider();
         openFragment(new HomeFragment());
         createToken();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        updateOnline(true);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        updateOnline(false);
+    }
+
+    private void updateOnline(boolean b) {
+        mUsersProvider.updateOnline(mAuthProvider.getUid(), b);
     }
 
     public void openFragment(Fragment fragment) {

@@ -1,6 +1,7 @@
 package com.gustavo.socialmediagame.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -20,6 +21,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.gustavo.socialmediagame.R;
@@ -32,6 +35,7 @@ import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.ChatsProvider;
 import com.gustavo.socialmediagame.providers.MessagesProvider;
 import com.gustavo.socialmediagame.providers.UsersProvider;
+import com.gustavo.socialmediagame.utils.RelativeTime;
 import com.squareup.picasso.Picasso;
 
 import org.jetbrains.annotations.NotNull;
@@ -132,7 +136,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
                 super.onItemRangeInserted(positionStart, itemCount);
-
+                updatedVieweb();
                 int numberMessage = mMessagesAdapter.getItemCount();
                 int lastMessagePosition = mLinearLayoutManager.findLastVisibleItemPosition();
 
@@ -220,23 +224,34 @@ public class ChatActivity extends AppCompatActivity {
              idUserInfo = mExtraIdUser1;
           }
 
-        mUsersProvider.getUser(idUserInfo).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        mUsersProvider.getUserRealTime(idUserInfo).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                    if (documentSnapshot.exists()){
-                        if (documentSnapshot.contains("username")){
-                            String username = documentSnapshot.getString("username");
-                            mTextViewUserName.setText(username);
+            public void onEvent(@Nullable @org.jetbrains.annotations.Nullable DocumentSnapshot documentSnapshot, @Nullable @org.jetbrains.annotations.Nullable FirebaseFirestoreException error) {
+                if (documentSnapshot.exists()){
+                    if (documentSnapshot.contains("username")){
+                        String username = documentSnapshot.getString("username");
+                        mTextViewUserName.setText(username);
+                    }
+                    if (documentSnapshot.contains("online")){
+                        Boolean online = documentSnapshot.getBoolean("online");
+                        if (online){
+                            mTextViewRelativeTime.setText("En linea");
+                        } else {
+                            long lastConnect = documentSnapshot.getLong("lastConnect");
+                            String relativetime = RelativeTime.getTimeAgo(lastConnect, ChatActivity.this);
+                            mTextViewRelativeTime.setText(relativetime);
                         }
-                        if (documentSnapshot.contains("image_profile")){
-                            String imageProfile = documentSnapshot.getString("image_profile");
-                            if (imageProfile != null){
-                                if (!imageProfile.isEmpty()){
-                                    Picasso.with(ChatActivity.this).load(imageProfile).into(mCircleImageProfile);
-                                }
+                    }
+
+                    if (documentSnapshot.contains("image_profile")){
+                        String imageProfile = documentSnapshot.getString("image_profile");
+                        if (imageProfile != null){
+                            if (!imageProfile.isEmpty()){
+                                Picasso.with(ChatActivity.this).load(imageProfile).into(mCircleImageProfile);
                             }
                         }
                     }
+                }
             }
         });
 
@@ -255,9 +270,31 @@ public class ChatActivity extends AppCompatActivity {
                 } else {
                     mExtraIdChat = queryDocumentSnapshots.getDocuments().get(0).getId();
                     getMessageChat();
+                    updatedVieweb();
                 }
             }
         });
+    }
+
+    private void updatedVieweb() {
+
+        String idSender = "";
+
+        if (mAuthProvider.getUid().equals(mExtraIdUser1)){
+            idSender = mExtraIdUser2;
+        } else {
+            idSender = mExtraIdUser1;
+        }
+
+        mMessagesProvider.getMessageByChatAndSender(mExtraIdChat, idSender).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    for (DocumentSnapshot document :queryDocumentSnapshots.getDocuments()){
+                            mMessagesProvider.updateVieweb(document.getId(), true);
+                    }
+            }
+        });
+
     }
 
     private void createChat() {
@@ -272,5 +309,7 @@ public class ChatActivity extends AppCompatActivity {
         ids.add(mExtraIdUser2);
         chat.setIds(ids);
         mChatProvider.create(chat);
+        mExtraIdChat = chat.getId();
+        getMessageChat();
     }
 }
