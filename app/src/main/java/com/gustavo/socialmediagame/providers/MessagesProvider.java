@@ -31,6 +31,9 @@ public class MessagesProvider {
     public Query getMessageByChatAndSender(String idChat, String idSender){
         return mCollection.whereEqualTo("idChat", idChat).whereEqualTo("idSender", idSender).whereEqualTo("vieweb", false);
     }
+    public Query getLastMessage(String idChat){
+        return mCollection.whereEqualTo("idChat",idChat).orderBy("timestamp", Query.Direction.DESCENDING).limit(1);
+    }
 
     public  Task<Void> updateVieweb(String idDocument, boolean state){
         Map<String, Object> map = new HashMap<>();

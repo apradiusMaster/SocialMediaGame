@@ -30,6 +30,7 @@ import com.gustavo.socialmediagame.adapters.PostsAdapter;
 import com.gustavo.socialmediagame.models.Post;
 import com.gustavo.socialmediagame.providers.AuthProvider;
 import com.gustavo.socialmediagame.providers.PostProvider;
+import com.gustavo.socialmediagame.utils.ViewebMessageHelper;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 
 import java.util.zip.Inflater;
