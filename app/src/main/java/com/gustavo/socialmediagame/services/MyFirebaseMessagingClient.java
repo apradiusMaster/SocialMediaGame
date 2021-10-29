@@ -10,6 +10,7 @@ import com.gustavo.socialmediagame.channel.NotificationHelper;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Random;
 
 public class MyFirebaseMessagingClient extends FirebaseMessagingService {
 
@@ -26,13 +27,27 @@ public class MyFirebaseMessagingClient extends FirebaseMessagingService {
         String body = data.get("body");
 
         if (title != null){
-            showNotification(title,body);
+            if (title.equals("NUEVO MENSAJE")){
+                int idNotificationChat = Integer.parseInt(data.get("idNotification")) ;
+                showNotificationMessage(title,body,idNotificationChat);
+
+            } else {
+                showNotification(title,body);
+            }
+
         }
     }
 
     private  void showNotification(String title, String body){
         NotificationHelper notificationHelper = new NotificationHelper(getBaseContext());
         NotificationCompat.Builder builder = notificationHelper.getNotification(title,body);
-        notificationHelper.getManager().notify(1, builder.build());
+        Random random = new Random();
+        int n = random.nextInt(10000);
+        notificationHelper.getManager().notify(n, builder.build());
+    }
+    private  void showNotificationMessage(String title, String body, int idNotificationChat){
+        NotificationHelper notificationHelper = new NotificationHelper(getBaseContext());
+        NotificationCompat.Builder builder = notificationHelper.getNotification(title,body);
+        notificationHelper.getManager().notify(idNotificationChat, builder.build());
     }
 }
