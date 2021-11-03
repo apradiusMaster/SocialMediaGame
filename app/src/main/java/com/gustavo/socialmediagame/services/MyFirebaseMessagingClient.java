@@ -49,13 +49,16 @@ public class MyFirebaseMessagingClient extends FirebaseMessagingService {
     private  void showNotificationMessage(Map<String, String> data){
         String title = data.get("title");
         String body = data.get("body");
+        String usernameSender = data.get("usernameSender");
+        String usernameReceiver = data.get("usernameReceiver");
+        String lastMessage = data.get("lastMessage");
         String messagesJSON = data.get("messages");
         int idNotificationChat = Integer.parseInt(data.get("idNotification")) ;
         Gson gson = new Gson();
          Message[] messages = gson.fromJson(messagesJSON, Message[].class);
 
         NotificationHelper notificationHelper = new NotificationHelper(getBaseContext());
-        NotificationCompat.Builder builder = notificationHelper.getNotificationMessage(messages);
+        NotificationCompat.Builder builder = notificationHelper.getNotificationMessage(messages, usernameSender, usernameReceiver, lastMessage);
         notificationHelper.getManager().notify(idNotificationChat, builder.build());
     }
 }
