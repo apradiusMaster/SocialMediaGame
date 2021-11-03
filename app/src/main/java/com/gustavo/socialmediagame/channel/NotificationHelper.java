@@ -9,8 +9,13 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.core.app.Person;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.gustavo.socialmediagame.R;
+import com.gustavo.socialmediagame.models.Message;
+
+import java.util.Date;
 
 public class NotificationHelper extends ContextWrapper {
 
@@ -56,6 +61,40 @@ public class NotificationHelper extends ContextWrapper {
                 .setColor(getResources().getColor(R.color.colorGray))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body).setBigContentTitle(title));
+    }
+
+    public  NotificationCompat.Builder getNotificationMessage(Message[] messages) {
+
+        Person person1 = new Person.Builder()
+                .setName("Apradius")
+                .setIcon(IconCompat.createWithResource(getApplicationContext(), R.mipmap.ic_launcher))
+                .build();
+        Person person2 = new Person.Builder()
+                .setName("Sakura")
+                .setIcon(IconCompat.createWithResource(getApplicationContext(), R.mipmap.ic_launcher))
+                .build();
+
+        NotificationCompat.MessagingStyle messagingStyle = new NotificationCompat.MessagingStyle(person1);
+        NotificationCompat.MessagingStyle.Message message1 = new
+                NotificationCompat.MessagingStyle.Message(
+                        "Ultimo nensaje",
+                new Date().getTime(),
+                person1);
+        messagingStyle.addMessage(message1);
+
+        for (Message m: messages) {
+
+            NotificationCompat.MessagingStyle.Message message2 = new
+                    NotificationCompat.MessagingStyle.Message(
+                    m.getMessage(),
+                    m.getTimestamp(),
+                    person2);
+            messagingStyle.addMessage(message2);
+        }
+
+        return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setStyle(messagingStyle);
     }
 
 

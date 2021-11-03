@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.gustavo.socialmediagame.R;
 import com.gustavo.socialmediagame.adapters.MessagesAdapter;
 import com.gustavo.socialmediagame.adapters.MyPostsAdapter;
@@ -211,7 +212,7 @@ public class ChatActivity extends AppCompatActivity {
                      if (task.isSuccessful()){
                          mTextViewMessage.setText("");
                          mMessagesAdapter.notifyDataSetChanged();
-                         sendNotification(message.getMessage());
+                         sendNotification(message);
                          Toast.makeText(ChatActivity.this, "Se envio el mensaje", Toast.LENGTH_SHORT).show();
                      } else {
                          Toast.makeText(ChatActivity.this, "No se pudo enviar el mensaje", Toast.LENGTH_SHORT).show();
@@ -354,7 +355,7 @@ public class ChatActivity extends AppCompatActivity {
         getMessageChat();
     }
 
-    private void sendNotification(String message) {
+    private void sendNotification(Message message) {
         String idUserChat = "";
 
         if (mAuthProvider.getUid().equals(mExtraIdUser1)){
@@ -368,10 +369,17 @@ public class ChatActivity extends AppCompatActivity {
                 if (documentSnapshot.exists()){
                     if (documentSnapshot.contains("token")){
                         String token = documentSnapshot.getString("token");
+
+                        ArrayList<Message> messageArrayList = new ArrayList<>();
+                        messageArrayList.add(message);
+                        Gson gson = new Gson();
+                        String messages = gson.toJson(messageArrayList);
+
                         Map<String, String> data = new HashMap<>();
                         data.put("title", "NUEVO MENSAJE");
-                        data.put("body", message);
+                        data.put("body", message.getMessage());
                         data.put("idNotification", String.valueOf(mIdNotificationChat));
+                        data.put("messages", messages);
                         FCMBody body = new FCMBody( token, "high", "4500s",data);
 
                         mNotificationProvider.sendNotification(body).enqueue(new Callback<FCMResponse>() {
