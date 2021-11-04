@@ -88,6 +88,8 @@ public class ChatActivity extends AppCompatActivity {
 
     String mMyUserName;
     String mUserNameChat;
+    String mImageSender;
+    String mImageReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -280,10 +282,10 @@ public class ChatActivity extends AppCompatActivity {
                     }
 
                     if (documentSnapshot.contains("image_profile")){
-                        String imageProfile = documentSnapshot.getString("image_profile");
-                        if (imageProfile != null){
-                            if (!imageProfile.isEmpty()){
-                                Picasso.with(ChatActivity.this).load(imageProfile).into(mCircleImageProfile);
+                        mImageReceiver = documentSnapshot.getString("image_profile");
+                        if (mImageReceiver != null){
+                            if (!mImageReceiver.isEmpty()){
+                                Picasso.with(ChatActivity.this).load(mImageReceiver).into(mCircleImageProfile);
                             }
                         }
                     }
@@ -413,6 +415,8 @@ public class ChatActivity extends AppCompatActivity {
         data.put("messages", messages);
         data.put("usernameSender", mMyUserName.toUpperCase());
         data.put("usernameReceiver", mUserNameChat.toUpperCase());
+        data.put("imageSender", mImageSender);
+        data.put("imageReceiver", mImageReceiver);
 
 
         String idSender = "";
@@ -465,6 +469,9 @@ public class ChatActivity extends AppCompatActivity {
 
                         if (documentSnapshot.contains("username")){
                             mMyUserName = documentSnapshot.getString("username");
+                        }
+                        if (documentSnapshot.contains("image_profile")){
+                            mImageSender = documentSnapshot.getString("image_profile");
                         }
                     }
             }

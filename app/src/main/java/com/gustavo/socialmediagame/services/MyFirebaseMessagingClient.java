@@ -1,5 +1,10 @@
 package com.gustavo.socialmediagame.services;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
@@ -8,6 +13,8 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.gustavo.socialmediagame.channel.NotificationHelper;
 import com.gustavo.socialmediagame.models.Message;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,12 +60,57 @@ public class MyFirebaseMessagingClient extends FirebaseMessagingService {
         String usernameReceiver = data.get("usernameReceiver");
         String lastMessage = data.get("lastMessage");
         String messagesJSON = data.get("messages");
+        String imageSender = data.get("imageSender");
+        String imageReceiver = data.get("imageReceiver");
+
         int idNotificationChat = Integer.parseInt(data.get("idNotification")) ;
         Gson gson = new Gson();
          Message[] messages = gson.fromJson(messagesJSON, Message[].class);
 
-        NotificationHelper notificationHelper = new NotificationHelper(getBaseContext());
-        NotificationCompat.Builder builder = notificationHelper.getNotificationMessage(messages, usernameSender, usernameReceiver, lastMessage);
-        notificationHelper.getManager().notify(idNotificationChat, builder.build());
+         new Handler(Looper.getMainLooper())
+                 .post(new Runnable() {
+                     @Override
+                     public void run() {
+                         Picasso.with(getApplicationContext())
+                                 .load(imageSender)
+                                 .into(new Target() {
+                                     @Override
+                                     public void onBitmapLoaded(Bitmap bitmapSender, Picasso.LoadedFrom from) {
+                                         Picasso.with(getApplicationContext())
+                                                 .load(imageReceiver)
+                                                 .into(new Target() {
+                                                     @Override
+                                                     public void onBitmapLoaded(Bitmap bitmapReceiver, Picasso.LoadedFrom from) {
+
+                                                         NotificationHelper notificationHelper = new NotificationHelper(getBaseContext());
+                                                         NotificationCompat.Builder builder = notificationHelper.getNotificationMessage(messages, usernameSender, usernameReceiver, lastMessage,bitmapSender, bitmapReceiver);
+                                                         notificationHelper.getManager().notify(idNotificationChat, builder.build());
+                                                     }
+
+                                                     @Override
+                                                     public void onBitmapFailed(Drawable errorDrawable) {
+
+                                                     }
+
+                                                     @Override
+                                                     public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                                     }
+                                                 });
+                                     }
+
+                                     @Override
+                                     public void onBitmapFailed(Drawable errorDrawable) {
+
+                                     }
+
+                                     @Override
+                                     public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                                     }
+                                 });
+                     }
+                 });
+
     }
 }
