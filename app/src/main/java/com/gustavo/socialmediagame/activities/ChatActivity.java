@@ -8,6 +8,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -417,7 +418,9 @@ public class ChatActivity extends AppCompatActivity {
         data.put("usernameReceiver", mUserNameChat.toUpperCase());
         data.put("imageSender", mImageSender);
         data.put("imageReceiver", mImageReceiver);
-
+        data.put("idSender", message.getIdSender());
+        data.put("idReceiver", message.getIdReceiver());
+        data.put("idChat", message.getIdChat());
 
         String idSender = "";
         if (mAuthProvider.getUid().equals(mExtraIdUser1)){

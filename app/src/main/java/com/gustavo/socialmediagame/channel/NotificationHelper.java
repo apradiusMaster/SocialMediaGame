@@ -64,7 +64,14 @@ public class NotificationHelper extends ContextWrapper {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body).setBigContentTitle(title));
     }
 
-    public  NotificationCompat.Builder getNotificationMessage(Message[] messages, String usernameSender, String usernameReceiver, String lastMessage, Bitmap bitmapSender, Bitmap bitmapReceiver) {
+    public  NotificationCompat.Builder getNotificationMessage(
+            Message[] messages,
+            String usernameSender,
+            String usernameReceiver,
+            String lastMessage,
+            Bitmap bitmapSender,
+            Bitmap bitmapReceiver,
+            NotificationCompat.Action action) {
 
         Person person1 = new Person.Builder()
                 .setName(usernameReceiver)
@@ -95,7 +102,8 @@ public class NotificationHelper extends ContextWrapper {
 
         return new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setStyle(messagingStyle);
+                .setStyle(messagingStyle)
+                .addAction(action);
     }
 
 
