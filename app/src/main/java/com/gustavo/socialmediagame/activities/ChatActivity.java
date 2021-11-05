@@ -416,11 +416,21 @@ public class ChatActivity extends AppCompatActivity {
         data.put("messages", messages);
         data.put("usernameSender", mMyUserName.toUpperCase());
         data.put("usernameReceiver", mUserNameChat.toUpperCase());
-        data.put("imageSender", mImageSender);
-        data.put("imageReceiver", mImageReceiver);
         data.put("idSender", message.getIdSender());
         data.put("idReceiver", message.getIdReceiver());
         data.put("idChat", message.getIdChat());
+
+        if (mImageSender.equals("")){
+            mImageSender = "IMAGEN_NO_VALIDA";
+        }
+        if (mImageReceiver.equals("")){
+            mImageReceiver = "IMAGEN_NO_VALIDA";
+        }
+
+        data.put("imageSender", mImageSender);
+        data.put("imageReceiver", mImageReceiver);
+
+
 
         String idSender = "";
         if (mAuthProvider.getUid().equals(mExtraIdUser1)){
